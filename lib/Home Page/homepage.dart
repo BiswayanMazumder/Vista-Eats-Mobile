@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class _Home_PageState extends State<Home_Page> {
   double longitude = 0;
   double latitude = 0;
   List<String> imageId = [];
-
+  bool _datafetched=false;
   @override
   void initState() {
     super.initState();
@@ -117,6 +117,7 @@ class _Home_PageState extends State<Home_Page> {
       data['data']['cards'][1]['card']['card']['gridElements']['infoWithStyle']['restaurants'];
       setState(() {
         restaurant_details=infoList;
+        _datafetched=true;
       });
 
       if (kDebugMode) {
@@ -265,79 +266,161 @@ class _Home_PageState extends State<Home_Page> {
               ],
             ),
             // const SizedBox(height: 30),
-            Column(
+           !_datafetched? Column(
+             mainAxisAlignment: MainAxisAlignment.center,
+             crossAxisAlignment: CrossAxisAlignment.center,
+             children: [
+               const SizedBox(
+                 height: 80,
+               ),
+               LoadingAnimationWidget.discreteCircle(
+                 color: Colors.orange.shade900,
+                 size: 50,
+               ),
+             ],
+           ): Column(
               children: [
                 for(int j=0;j<restaurant_details.length;j++)
                   Padding(
                     padding: const EdgeInsets.only(left: 20,right: 20,top: 30),
-                    child:restaurant_details[j]['info']['isOpen']? Container(
-                      // height: 400,
-                      width: MediaQuery.sizeOf(context).width,
-                      decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.all(Radius.circular(20))
-                      ),
-                      child: Column(
-                        children: [
-                          Image.network("https://media-assets.swiggy.com/swiggy/image/upload/${restaurant_details[j]['info']['cloudinaryImageId']}",
-                          width: MediaQuery.sizeOf(context).width,
-                            height: 220,
-                            fit: BoxFit.fill,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(restaurant_details[j]['info']['name'],style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20
-                              ),),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const CircleAvatar(
-                                backgroundColor: Colors.green,
-                                radius: 8,
-                                child: Icon(Icons.star,color: Colors.white,size: 11,),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text("${restaurant_details[j]['info']['avgRatingString']} (${restaurant_details[j]['info']['totalRatingsString']}) ${restaurant_details[j]['info']['locality']}, ${restaurant_details[j]['info']['sla']['lastMileTravelString']}",style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,color: Colors.grey
-                              ),),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text("${restaurant_details[j]['info']['cuisines'][0]} ${restaurant_details[j]['info']['costForTwo']}",style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,color: Colors.grey
-                              ),),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
+                    child:restaurant_details[j]['info']['isOpen']? InkWell(
+                      onTap: (){
+                        if (kDebugMode) {
+                          print("Restaurant ID:${restaurant_details[j]['info']['id']}");
+                        }
+                      },
+                      child: Container(
+                        // height: 400,
+                        width: MediaQuery.sizeOf(context).width,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: const BorderRadius.all(Radius.circular(20))
+                        ),
+                        child: Column(
+                          children: [
+                            Stack(
+                              children: [
+                                // Background Image
+                                Positioned(
+                                  child: Image.network(
+                                    "https://media-assets.swiggy.com/swiggy/image/upload/${restaurant_details[j]['info']['cloudinaryImageId']}",
+                                    width: MediaQuery.sizeOf(context).width,
+                                    height: 220,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+
+                                // Small Box at Bottom Right
+                                Positioned(
+                                  bottom: 10,
+                                  right: 10,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      "${restaurant_details[j]['info']['sla']['slaString']}",
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(restaurant_details[j]['info']['name'],style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 20
+                                ),),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                const CircleAvatar(
+                                  backgroundColor: Colors.green,
+                                  radius: 8,
+                                  child: Icon(Icons.star,color: Colors.white,size: 11,),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Text("${restaurant_details[j]['info']['avgRatingString']} (${restaurant_details[j]['info']['totalRatingsString']}) ${restaurant_details[j]['info']['locality']}, ${restaurant_details[j]['info']['sla']['lastMileTravelString']}",style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,color: Colors.grey
+                                ),),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    restaurant_details[j]['info']['cuisines'].join(', '),
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text("${restaurant_details[j]['info']['costForTwo']}",style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,color: Colors.grey
+                                ),),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text("${restaurant_details[j]['info']['aggregatedDiscountInfoV3']['header']} ${restaurant_details[j]['info']['aggregatedDiscountInfoV3']['subHeader']}",style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,color: Colors.grey
+                                ),),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
                       ),
                     ):Container(),
                   ),
