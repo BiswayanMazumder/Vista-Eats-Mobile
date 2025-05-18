@@ -28,6 +28,7 @@ class _Home_PageState extends State<Home_Page> {
     _getCurrentLocation();
     fetchapidata();
     fetchnearbytoprestaurants();
+    fetchtoprestros();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -104,6 +105,8 @@ class _Home_PageState extends State<Home_Page> {
   }
   List<dynamic> restaurant_details=[];
   String restaurant_heading="";
+  List<dynamic> restaurant_details1=[];
+  String restaurant_heading1="";
   Future<void> fetchnearbytoprestaurants() async {
     final response = await http.get(Uri.parse(
         'https://www.swiggy.com/dapi/restaurants/list/v5?lat=20.3168359&lng=85.8179029&is-seo-homepage-enabled=true&page_type=MOBILE_LISTING'));
@@ -122,6 +125,34 @@ class _Home_PageState extends State<Home_Page> {
 
       if (kDebugMode) {
         print("Restaurant Details: $restaurant_details");
+      }
+    } else {
+      if (kDebugMode) {
+        print('Failed to load data');
+      }
+    }
+  }
+  Future<void> fetchtoprestros() async {
+    final response = await http.get(Uri.parse(
+        'https://www.swiggy.com/dapi/restaurants/list/v5?lat=20.325064500000003&lng=85.81703549999999&is-seo-homepage-enabled=true&page_type=MOBILE_APP_LISTING'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        restaurant_heading1=data['data']['cards'][2]['card']['card']['title'];
+      });
+      if (kDebugMode) {
+        print("Heading $restaurant_heading1");
+      }
+      final List<dynamic> infoList =
+      data['data']['cards'][4]['card']['card']['gridElements']['infoWithStyle']['restaurants'];
+      setState(() {
+        restaurant_details1=infoList;
+        _datafetched=true;
+      });
+
+      if (kDebugMode) {
+        print("Restaurant Details1: $restaurant_details1");
       }
     } else {
       if (kDebugMode) {
@@ -216,6 +247,103 @@ class _Home_PageState extends State<Home_Page> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
+                  restaurant_heading1,
+                  style: GoogleFonts.poppins(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                // height: 200, // Ensure a fixed height for scrolling content
+                width: double.infinity,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(restaurant_details1.length, (i) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                'https://media-assets.swiggy.com/swiggy/image/upload/${restaurant_details[i]['info']['cloudinaryImageId']}',
+                                height: 90,
+                                width: 70,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            SizedBox(
+                              width: 70, // Same as the image width
+                              child: Text(
+                                restaurant_details[i]['info']['name'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            SizedBox(
+                              width: 70,
+                              child:Row(
+                                children: [
+                                  const CircleAvatar(
+                                    backgroundColor: Colors.green,
+                                    radius: 5,
+                                    child: Icon(Icons.star,color: Colors.white,size: 8,),
+                                  ),
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text("${restaurant_details[i]['info']['avgRatingString']}, ${restaurant_details[i]['info']['sla']['slaString']}",style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 6,color: Colors.black
+                                  ),),
+                                ],
+                              )
+                            ),
+                            const SizedBox(
+                              height: 3,
+                            ),
+                            Text(
+                              restaurant_details[i]['info']['cuisines'][0],
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 6,
+                                color: Colors.grey,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ],
+                        )
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
                   "What's on your mind?",
                   style: GoogleFonts.poppins(
                     color: Colors.black,
@@ -224,9 +352,7 @@ class _Home_PageState extends State<Home_Page> {
                 ),
               ),
             ),
-
-            const SizedBox(height: 20),
-
+            // const SizedBox(height: 10),
             // ✅ Horizontally scrollable images
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
