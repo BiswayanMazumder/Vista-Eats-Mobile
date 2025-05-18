@@ -109,7 +109,7 @@ class _Home_PageState extends State<Home_Page> {
   String restaurant_heading1="";
   Future<void> fetchnearbytoprestaurants() async {
     final response = await http.get(Uri.parse(
-        'https://www.swiggy.com/dapi/restaurants/list/v5?lat=20.3168359&lng=85.8179029&is-seo-homepage-enabled=true&page_type=MOBILE_LISTING'));
+        'https://www.swiggy.com/dapi/restaurants/list/v5?lat=20.325064500000003&lng=85.81703549999999&is-seo-homepage-enabled=true&page_type=MOBILE_APP_LISTING'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -124,6 +124,7 @@ class _Home_PageState extends State<Home_Page> {
       });
 
       if (kDebugMode) {
+        print("Header: $restaurant_heading");
         print("Restaurant Details: $restaurant_details");
       }
     } else {
@@ -392,19 +393,19 @@ class _Home_PageState extends State<Home_Page> {
               ],
             ),
             // const SizedBox(height: 30),
-           !_datafetched? Column(
-             mainAxisAlignment: MainAxisAlignment.center,
-             crossAxisAlignment: CrossAxisAlignment.center,
-             children: [
-               const SizedBox(
-                 height: 80,
-               ),
-               LoadingAnimationWidget.discreteCircle(
-                 color: Colors.orange.shade900,
-                 size: 50,
-               ),
-             ],
-           ): Column(
+            !_datafetched? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 80,
+                ),
+                LoadingAnimationWidget.discreteCircle(
+                  color: Colors.orange.shade900,
+                  size: 50,
+                ),
+              ],
+            ): Column(
               children: [
                 for(int j=0;j<restaurant_details.length;j++)
                   Padding(
@@ -466,10 +467,15 @@ class _Home_PageState extends State<Home_Page> {
                                 const SizedBox(
                                   width: 10,
                                 ),
-                                Text(restaurant_details[j]['info']['name'],style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20
-                                ),),
+                                Expanded(
+                                  child: Text(restaurant_details[j]['info']['name'],style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 20
+                                  ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(
@@ -536,15 +542,16 @@ class _Home_PageState extends State<Home_Page> {
                                 const SizedBox(
                                   width: 10,
                                 ),
-                                Text("${restaurant_details[j]['info']['aggregatedDiscountInfoV3']['header']} ${restaurant_details[j]['info']['aggregatedDiscountInfoV3']['subHeader']}",style: GoogleFonts.poppins(
+                                restaurant_details[j]['info']['aggregatedDiscountInfoV3']==null?const Text(''):
+                                Text("${restaurant_details[j]['info']['aggregatedDiscountInfoV3']['header']} ${restaurant_details[j]['info']['aggregatedDiscountInfoV3']['subHeader']==null?'':restaurant_details[j]['info']['aggregatedDiscountInfoV3']['subHeader']}",style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 12,color: Colors.grey
                                 ),),
                               ],
                             ),
-                            const SizedBox(
+                            restaurant_details[j]['info']['aggregatedDiscountInfoV3']!=null?const SizedBox(
                               height: 20,
-                            ),
+                            ):Container(),
                           ],
                         ),
                       ),
