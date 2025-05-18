@@ -7,7 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vistaeats/Restaurant%20Menu%20Details/menu_details_restaurants.dart';
 class Home_Page extends StatefulWidget {
   const Home_Page({super.key});
 
@@ -29,6 +30,7 @@ class _Home_PageState extends State<Home_Page> {
     fetchapidata();
     fetchnearbytoprestaurants();
     fetchtoprestros();
+    initPrefs();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -66,6 +68,8 @@ class _Home_PageState extends State<Home_Page> {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemarks[0];
+    prefs.setDouble('Latitude', position.latitude);
+    prefs.setDouble('Longitude', position.longitude);
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
@@ -136,6 +140,11 @@ class _Home_PageState extends State<Home_Page> {
         print('Failed to load data');
       }
     }
+  }
+  late SharedPreferences prefs;
+
+  void initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   List<String> likedrestroids = [];
@@ -466,9 +475,11 @@ class _Home_PageState extends State<Home_Page> {
                           child: restaurant_details[j]['info']['isOpen']
                               ? InkWell(
                                   onTap: () {
+                                    prefs.setString('Restro_ID', restaurant_details[j]['info']['id']);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Menu_Details(),));
                                     if (kDebugMode) {
                                       print(
-                                          "Restaurant ID:${restaurant_details[j]['info']['id']}");
+                                          "Restaurant ID:${prefs.getString("Restro_ID")}");
                                     }
                                   },
                                   child: Container(
