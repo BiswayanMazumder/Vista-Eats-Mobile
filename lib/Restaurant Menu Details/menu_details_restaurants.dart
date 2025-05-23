@@ -304,7 +304,8 @@ class _Menu_DetailsState extends State<Menu_Details> {
                       const SizedBox(
                         width: 20,
                       ),
-                      restaurant_menu_items['cards'][1]['card']['card']['carousel'] !=
+                      restaurant_menu_items['cards'][1]['card']['card']
+                                  ['carousel'] !=
                               null
                           ? Text(
                               restaurant_menu_items['cards'][1]['card']['card']
@@ -334,18 +335,211 @@ class _Menu_DetailsState extends State<Menu_Details> {
                                           ['card']['carousel']
                                       .length,
                                   (i) {
-                                    return Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 20.0),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          'https://media-assets.swiggy.com/swiggy/image/upload/${restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['creativeId']}',
-                                          height: 200,
-                                          width: 280,
-                                          fit: BoxFit.fill,
+                                    return Stack(
+                                      children: [
+                                        Positioned(
+                                            child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 20.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Image.network(
+                                              'https://media-assets.swiggy.com/swiggy/image/upload/${restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['creativeId']}',
+                                              height: 200,
+                                              width: 280,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                        )),
+                                        Positioned(
+                                            bottom: restaurant_menu_items['cards']
+                                                                            [1]
+                                                                        ['card']
+                                                                    ['card']
+                                                                ['carousel'][i]
+                                                            ['dish']['info']
+                                                        ['finalPrice'] !=
+                                                    null
+                                                ? 55
+                                                : 40,
+                                            left: 10,
+                                            child: Text(
+                                              restaurant_menu_items['cards'][1]
+                                                      ['card']['card']
+                                                  ['carousel'][i]['title'],
+                                              style: GoogleFonts.poppins(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 12),
+                                            )),
+                                        Positioned(
+                                          bottom: 15,
+                                          left: 10,
+                                          child: Row(
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  if (restaurant_menu_items['cards']
+                                                                              [
+                                                                              1]
+                                                                          [
+                                                                          'card']
+                                                                      [
+                                                                      'card']
+                                                                  [
+                                                                  'carousel'][i]
+                                                              ['dish']['info']
+                                                          ['finalPrice'] !=
+                                                      null)
+                                                    Text(
+                                                      '₹${(restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['dish']['info']['price'] / 100).toString()}',
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        decorationColor:
+                                                            Colors.white,
+                                                        decoration: TextDecoration
+                                                            .lineThrough, // <- This adds the strikethrough
+                                                      ),
+                                                    ),
+                                                  SizedBox(
+                                                    width: restaurant_menu_items['cards'][1]['card']
+                                                                            [
+                                                                            'card']
+                                                                        [
+                                                                        'carousel'][i]
+                                                                    [
+                                                                    'dish']['info']
+                                                                [
+                                                                'finalPrice'] !=
+                                                            null
+                                                        ? 10
+                                                        : 0,
+                                                  ),
+                                                  Text(
+                                                    '₹${(restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['dish']['info']['finalPrice'] != null ? restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['dish']['info']['finalPrice'] / 100 : restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['dish']['info']['price'] / 100).toString()}',
+                                                    style: GoogleFonts.poppins(
+                                                        color: Colors.white,
+                                                        fontWeight: restaurant_menu_items['cards'][1]['card']['card']
+                                                                            [
+                                                                            'carousel'][i]
+                                                                        [
+                                                                        'dish']['info']
+                                                                    [
+                                                                    'finalPrice'] !=
+                                                                null
+                                                            ? FontWeight.w700
+                                                            : FontWeight.w600,
+                                                        fontSize: 12),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
+                                        Positioned(
+                                            right: 40,
+                                            bottom: 20,
+                                            child: InkWell(
+                                              onTap: () {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    backgroundColor:
+                                                        Colors.grey.shade300,
+                                                    builder: (context) {
+                                                      return Container(
+                                                        height:
+                                                            MediaQuery.sizeOf(
+                                                                    context)
+                                                                .height,
+                                                        width:
+                                                            MediaQuery.sizeOf(
+                                                                    context)
+                                                                .width,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors
+                                                                .grey.shade300,
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .vertical(
+                                                                    top: Radius
+                                                                        .circular(
+                                                                            50))),
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Column(
+                                                            children: [
+                                                              const SizedBox(
+                                                                height: 30,
+                                                              ),
+                                                              for (int j = 0;
+                                                                  j <
+                                                                      restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['dish']['info']
+                                                                              [
+                                                                              'addons']
+                                                                          .length;
+                                                                  j++)
+                                                                Column(
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              20,
+                                                                        ),
+                                                                        Text(
+                                                                            restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['dish']['info']['addons'][j][
+                                                                                'groupName'],
+                                                                            style: GoogleFonts.poppins(
+                                                                                color: Colors.black,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                fontSize: 18))
+                                                                      ],
+                                                                    )
+                                                                  ],
+                                                                )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                  if (kDebugMode) {
+                                                    print(restaurant_menu_items[
+                                                                  'cards'][1]
+                                                              ['card']['card'][
+                                                          'carousel'][i]['dish']
+                                                      ['info']['addons']);
+                                                  }
+
+                                              },
+                                              child:restaurant_menu_items['cards'][1]['card']['card']['carousel'][i]['dish']['info']
+                                    [
+                                    'addons']!=null? Container(
+                                                width: 80,
+                                                height: 35,
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'ADD',
+                                                    style: GoogleFonts.poppins(
+                                                        color: Colors.green,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  ),
+                                                ),
+                                              ):Container(),
+                                            ))
+                                      ],
                                     );
                                   },
                                 ),
